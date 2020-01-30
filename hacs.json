@@ -1,0 +1,5 @@
+{
+    "name": "Lutron RadioRA Classic",
+    "domains": ["sensor", "light" ],
+    "render_readme": true
+}

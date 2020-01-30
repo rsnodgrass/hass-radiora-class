@@ -1,0 +1,8 @@
+{
+  "domain": "radiora_classic",
+  "name": "Lutron RadioRA Classic",
+  "documentation": "https://github.com/rsnodgrass/hass-radiora-classic/",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": ["@rsnodgrass"]
+}
