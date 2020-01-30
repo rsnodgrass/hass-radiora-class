@@ -1,8 +1,8 @@
 """
-SensorPush Home Assistant sensors
+RadioRA Classic Home Assistant sensors
 
 FUTURE:
-- support Celsius and Fahrenheit (based on SensorPush's cloud responses)
+- support Celsius and Fahrenheit (based on RadioRA Classic's cloud responses)
 """
 import logging
 
@@ -10,13 +10,13 @@ import voluptuous as vol
 from homeassistant.helpers import config_validation as cv
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 
-from . import ( SensorPushEntity, SENSORPUSH_SERVICE, SENSORPUSH_SAMPLES,
+from . import ( RadioRA ClassicEntity, SENSORPUSH_SERVICE, SENSORPUSH_SAMPLES,
                 SENSORPUSH_DOMAIN, CONF_MAXIMUM_AGE,
                 CONF_UNIT_SYSTEM, UNIT_SYSTEM_IMPERIAL, UNIT_SYSTEM_METRIC, UNIT_SYSTEMS )
 
 LOG = logging.getLogger(__name__)
 
-DEPENDENCIES = ['sensorpush']
+DEPENDENCIES = ['radiora_classic']
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
@@ -27,11 +27,11 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 # pylint: disable=unused-argument
 async def async_setup_platform(hass, config, async_add_entities_callback, discovery_info=None):
 #def setup_platform(hass, config, add_entities_callback, discovery_info=None):
-    """Setup the SensorPush sensor"""
+    """Setup the RadioRA Classic sensor"""
 
-    sensorpush_service = hass.data.get(SENSORPUSH_SERVICE)
-    if not sensorpush_service:
-        LOG.info("NOT setting up SensorPush -- missing SENSORPUSH_SERVICE")
+    radiora_classic_service = hass.data.get(SENSORPUSH_SERVICE)
+    if not radiora_classic_service:
+        LOG.info("NOT setting up RadioRA Classic -- missing SENSORPUSH_SERVICE")
         return
 
 #    conf = hass.config[SENSORPUSH_DOMAIN]
@@ -41,26 +41,26 @@ async def async_setup_platform(hass, config, async_add_entities_callback, discov
 #    if conf.get(CONF_UNIT_SYSTEM) == UNIT_SYSTEM_METRIC:
 #        unit_system = UNIT_SYSTEM_METRIC
 
-    LOG.debug(f"Setting up SensorPush sensors: {sensorpush_service.sensors}")
+    LOG.debug(f"Setting up RadioRA Classic sensors: {radiora_classic_service.sensors}")
 
     hass_sensors = []
-    for sensor_info in sensorpush_service.sensors.values():
+    for sensor_info in radiora_classic_service.sensors.values():
         LOG.info(f"SensorInfo: {sensor_info} -- {type(sensor_info)}")
 
         if sensor_info.get('active') == 'False': # FIXME
-            LOG.warn(f"Ignoring inactive SensorPush sensor '{sensor_info.get('name')}")
+            LOG.warn(f"Ignoring inactive RadioRA Classic sensor '{sensor_info.get('name')}")
             continue
 
-        LOG.info(f"Instantiating SensorPush sensors: {sensor_info}")
-        hass_sensors.append( SensorPushTemperature(hass, conf, sensor_info, unit_system) )
-        hass_sensors.append( SensorPushHumidity(hass, conf, sensor_info, unit_system))
+        LOG.info(f"Instantiating RadioRA Classic sensors: {sensor_info}")
+        hass_sensors.append( RadioRA ClassicTemperature(hass, conf, sensor_info, unit_system) )
+        hass_sensors.append( RadioRA ClassicHumidity(hass, conf, sensor_info, unit_system))
 
     # execute callback to add new entities
     async_add_entities_callback(hass_sensors, True)
 
 # pylint: disable=too-many-instance-attributes
-class SensorPushHumidity(SensorPushEntity):
-    """Humidity sensor for a SensorPush device"""
+class RadioRA ClassicHumidity(RadioRA ClassicEntity):
+    """Humidity sensor for a RadioRA Classic device"""
 
     def __init__(self, hass, config, sensor_info, unit_system):
         self._state = ''
@@ -76,8 +76,8 @@ class SensorPushHumidity(SensorPushEntity):
         return '%'
 
 # pylint: disable=too-many-instance-attributes
-class SensorPushTemperature(SensorPushEntity):
-    """Temperature sensor for a SensorPush device"""
+class RadioRA ClassicTemperature(RadioRA ClassicEntity):
+    """Temperature sensor for a RadioRA Classic device"""
 
     def __init__(self, hass, config, sensor_info, unit_system):
         self._state = ''
