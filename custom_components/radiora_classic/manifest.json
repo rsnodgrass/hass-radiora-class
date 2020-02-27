@@ -2,7 +2,7 @@
   "domain": "radiora_classic",
   "name": "Lutron RadioRA Classic",
   "documentation": "https://github.com/rsnodgrass/hass-radiora-classic/",
-  "requirements": [],
+  "requirements": [ "pyradiora_classic>=0.0.1" ],
   "dependencies": [],
   "codeowners": ["@rsnodgrass"]
 }

@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=WREP29UDAMB6G)
 
-Home Assistant integration for the [Lutron RadioRA Classic] light switches and dimmers, using the RadioRA Classic Smart Bridge.
+Home Assistant integration for the [Lutron RadioRA Classic] light switches and dimmers.
 
 ## Installation
 
@@ -18,13 +18,30 @@ Easiest is by setting up [Home Assistant Community Store (HACS)](https://github.
 Example configuration.yaml entry:
 
 ```yaml
-sensors:
-  - platform: radiora_classic
-    host: localhost
-    port: 8333
+radiora_classic:
+  controllers:
+    - tty: /dev/ttyUSB0
+      name: "Main House"   # defaults to "RadioRA Classic"
 ```
 
-You only need to create the sensor for the Lutron RadioRA bridge and Home Assistant will dynamically create all the switches and dimmers based on the Bridge settings.
+Note this supports multiple RS232 controllers. For each RadioRA RS232 controller, this will dynamically create 32 switches, plus one sensor/switch for the RS232 controller itself.
+
+Additionally, you can configure naming and switch type for each zone.
+
+```yaml
+radiora_classic:
+  controllers:
+    - tty: /dev/ttyUSB0
+      name: "Main House"   # defaults to "RadioRA Classic"
+      zones:
+        1:
+	  name: "Kichen"
+	  type: dimmer
+        2:
+	  name: "Bathroom"
+	  type: switch
+```
+
 
 #### Lovelace
 
@@ -36,3 +53,8 @@ You only need to create the sensor for the Lutron RadioRA bridge and Home Assist
 ## Known Issues
 
 * Not working
+
+#### Not Supported
+
+* This will not support Lutron scenes, instead relying on Home Assistant scene specification which are more flexible and can include non-Lutron devices.
+* Support for fans is not currently enabled.
