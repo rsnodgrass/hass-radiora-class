@@ -83,10 +83,73 @@ class RadioRAClassicDevice(Entity):
     @property
     def device_state_attributes(self):
         """Return the state attributes."""
-        attr = {}
-        return attr
+        return {}
 
     @property
     def should_poll(self):
         """No polling needed."""
-        return False
+        return True
+
+class RadioRAClassicBridge(Entity):
+    """Representation of a Lutron RadioRA Classic bridge."""
+
+    def __init__(self, radiora, name):
+        super().__init__()
+        self._radiora = radioara
+        self._name = "RadioRA Bridge"
+
+    @property
+    def name(self):
+        """Return the name of the device."""
+        return self._name
+
+    @property
+    def supported_features(self):
+        """Flag supported features."""
+        #return SUPPORT_TURN_OFF | SUPPORT_TURN_ON
+        return
+
+    async def async_added_to_hass(self):
+        """Register callbacks."""
+    #    self._radiora.add_subscriber(
+    #        self.device_id, self.async_schedule_update_ha_state
+    #    )
+        return
+
+    async def async_turn_on(self, **kwargs):
+        """Turn all lights on."""
+        await self._radiora.turn_all_on()
+
+    async def async_turn_off(self, **kwargs):
+        """Turn all lights off."""
+        await self._radiora.turn_all_off()
+
+    async def async_security_flash_on(self, **kwargs):
+        """Turn the security flashing lights on."""
+        await self._radiora.turn_flash_on()
+
+    async def async_security_flash_off(self, **kwargs):
+        """Turn the security flashing lights off."""
+        await self._radiora.turn_flash_off()
+
+    @property
+    def is_on(self):
+        """Return true if any light controlled by the bridge is on."""
+        return True # FIXME: for now, this is "always" on
+
+    async def async_update(self):
+        """Call when forcing a refresh of the device."""
+
+        # we only need ONE of the light switches to update to get data for ALL the zones
+        await self._radiora.update()
+
+    @property
+    def device_state_attributes(self):
+        """Return the state attributes."""
+        return {}
+
+
+    @property
+    def should_poll(self):
+        """No polling needed."""
+        return True

@@ -21,7 +21,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 
     devices = []
     for zone in range(1, 31):  # FIXME: allow override to specify names AND which zones to include
-        name = f"RadioRA Zone {self._zone}"
+        name = f"RadioRA Zone {zone}"
         devices.append(RadioRAClassicLight(radiora, zone, name))
 
     async_add_entities(devices)
@@ -49,18 +49,22 @@ class RadioRAClassicLight(RadioRAClassicDevice, Light):
 
     async def async_turn_on(self, **kwargs):
         """Turn the light on."""
-        self._radiora.turn_on(self._zone)
-
+        # if brightness specified, set the dimmer level
         if ATTR_BRIGHTNESS in kwargs:
             hass_brightness = int((kwargs[ATTR_BRIGHTNESS] / 255.0) * 200.0)
             lutron_brightness = to_lutron_level( hass_brightness )
             await self._radiora.set_dimmer_level(self._zone, lutron_brightness)
             self._brightness = lutron_brightness
-            return
+        else:
+            # if no dimmer level set, just turn on        
+            self._radiora.turn_on(self._zone)
+
+        # FIXME: after state change we should update the zone_status...
 
     async def async_turn_off(self, **kwargs):
         """Turn the light off."""
         await self._radiora.turn_off(self._zone)
+        # FIXME: after state change we should update the zone_status...
 
     @property
     def is_on(self):
