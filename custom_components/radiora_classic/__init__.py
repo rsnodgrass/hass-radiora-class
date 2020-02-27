@@ -39,10 +39,10 @@ CONFIG_SCHEMA = vol.Schema(
 
 RADIORA_CLASSIC_COMPONENTS = [ "light" ]
 
-async def async_setup(hass, base_config):
+async def async_setup(hass, config):
     """Set up the Lutron component."""
 
-    tty = base_config.get(DOMAIN)
+    tty = config.get(DOMAIN)
 
     radiora = get_async_radiora_controller(tty, hass.loop)
     if not radiora:
@@ -51,25 +51,21 @@ async def async_setup(hass, base_config):
 
     hass.data[RADIORA_CLASSIC] = radiora
 
-#    for component in LUTRON_CASETA_COMPONENTS:
-#        hass.async_create_task(
-#            discovery.async_load_platform(hass, component, DOMAIN, {}, config)
-#        )
-
+    for component in RADIORA_CLASSIC_COMPONENTS:
+       hass.async_create_task(
+            discovery.async_load_platform(hass, component, DOMAIN, {}, config)
+        )
     return True
 
 class RadioRAClassicDevice(Entity):
     """Common base class for all Lutron RadioRA Classic devices."""
 
-    def __init__(self, device, radiora):
+    def __init__(self, radiora, zone):
         """Set up the base class.
-
-        [:param]device the device metadata
         [:param]radiora the RadioRA controller
         """
-        self._device = device
         self._radiora = radiora
-        self._zone = 1
+        self._zone = zone
         self._system = 1
 
     async def async_added_to_hass(self):
@@ -80,24 +76,9 @@ class RadioRAClassicDevice(Entity):
         return
 
     @property
-    def device_id(self):
-        """Return the device ID used for calling pylutron_caseta."""
-        return self._device["device_id"]
-
-    @property
     def name(self):
         """Return the name of the device."""
-        return self._device["name"]
-
-    @property
-    def serial(self):
-        """Return the serial number of the device."""
-        return self._device["serial"]
-
-    @property
-    def unique_id(self):
-        """Return the unique ID of the device (serial)."""
-        return str(self.serial)
+        return f"RadioRA Zone {self._zone}"
 
     @property
     def device_state_attributes(self):
