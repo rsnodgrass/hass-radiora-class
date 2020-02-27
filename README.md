@@ -54,3 +54,4 @@ radiora_classic:
 
 * switches and fans
 * scenes/rooms
+* Chronos bridged systems (e.g. second set of 32 dimmer switches)
