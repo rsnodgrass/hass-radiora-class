@@ -20,16 +20,17 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     radiora = hass.data[RADIORA_CLASSIC]
 
     devices = []
-    for zone in range(1, 31):
-        devices.append(RadioRAClassicLight(radiora, zone))
+    for zone in range(1, 31):  # FIXME: allow override to specify names AND which zones to include
+        name = f"RadioRA Zone {self._zone}"
+        devices.append(RadioRAClassicLight(radiora, zone, name))
 
     async_add_entities(devices)
 
 class RadioRAClassicLight(RadioRAClassicDevice, Light):
     """Representation of a Lutron RadioRA Classic light."""
 
-    def __init__(self, radiora, zone):
-        super().__init__(radiora, zone)
+    def __init__(self, radiora, zone, name):
+        super().__init__(radiora, zone, name)
         self._brightness = DEFAULT_BRIGHTNESS
 
     @property

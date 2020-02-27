@@ -48,7 +48,6 @@ async def async_setup(hass, config):
     if not radiora:
         LOG.error("Unable to connect to RadioRA Classic Smart Bridge at %s", tty)
         return False
-
     hass.data[RADIORA_CLASSIC] = radiora
 
     for component in RADIORA_CLASSIC_COMPONENTS:
@@ -60,11 +59,12 @@ async def async_setup(hass, config):
 class RadioRAClassicDevice(Entity):
     """Common base class for all Lutron RadioRA Classic devices."""
 
-    def __init__(self, radiora, zone):
+    def __init__(self, radiora, zone, name):
         """Set up the base class.
         [:param]radiora the RadioRA controller
         """
         self._radiora = radiora
+        self._name = name
         self._zone = zone
         self._system = 1
 
@@ -78,7 +78,7 @@ class RadioRAClassicDevice(Entity):
     @property
     def name(self):
         """Return the name of the device."""
-        return f"RadioRA Zone {self._zone}"
+        return self._name
 
     @property
     def device_state_attributes(self):
