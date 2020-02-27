@@ -1,33 +1,35 @@
-"""Support for Lutron Caseta lights."""
+"""Support for Lutron RadioRA Classic lights."""
 import logging
 
 from homeassistant.components.light import (
-    ATTR_BRIGHTNESS,
     DOMAIN,
     SUPPORT_BRIGHTNESS,
     Light,
 )
 from homeassistant.components.lutron.light import to_hass_level, to_lutron_level
 
-from . import LUTRON_RADIORA_CLASSIC_SMARTBRIDGE, RadioRAClassicDevice
+from . import LUTRON_RADIORA_CLASSIC, RadioRAClassicDevice
 
-_LOGGER = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
+DEFAULT_BRIGHTNESS = 100
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Set up the Lutron RadioRA Classic lights."""
-    devs = []
-    bridge = hass.data[LUTRON_RADIORA_CLASSIC_SMARTBRIDGE]
-    light_devices = bridge.get_devices_by_domain(DOMAIN)
-    for light_device in light_devices:
-        dev = LutronCasetaLight(light_device, bridge)
-        devs.append(dev)
+    radiora = hass.data[LUTRON_RADIORA_CLASSICE]
 
-    async_add_entities(devs, True)
+    devices = []
+#    for light_device in light_devices:
+#        zone = 1
+#        devices.append(LutronCasetaLight(light_device, radiora, zone))
+    async_add_entities(devices, True)
 
+class RadioRAClassicLight(RadioRAClassicDevice, Light):
+    """Representation of a Lutron RadioRA Classic light."""
 
-class RadioRAClassicLight(LutronCasetaDevice, Light):
-    """Representation of a Lutron RadioRA Classic light, including dimmable."""
+    def __init__(self, device, radiora, zone):
+        super().__init__(device, radior, zone)
+        self._brightness = DEFAULT_BRIGHTNESS
 
     @property
     def supported_features(self):
@@ -37,23 +39,24 @@ class RadioRAClassicLight(LutronCasetaDevice, Light):
     @property
     def brightness(self):
         """Return the brightness of the light."""
-        return to_hass_level(self._device["current_state"])
+        return self._brightness # we cannot GET the brightness of the light...only return what we know
 
     async def async_turn_on(self, **kwargs):
         """Turn the light on."""
-        brightness = kwargs.get(ATTR_BRIGHTNESS, 255)
-        self._smartbridge.set_value(self.device_id, to_lutron_level(brightness))
+        self._radiora.turn_on(self._zone)
 
     async def async_turn_off(self, **kwargs):
         """Turn the light off."""
-        self._smartbridge.set_value(self.device_id, 0)
+        self._radiora.turn_off(self._zone)
 
     @property
     def is_on(self):
         """Return true if device is on."""
-        return self._device["current_state"] > 0
+        self._radiora.is_zone_on(self._zone)
 
     async def async_update(self):
         """Call when forcing a refresh of the device."""
-        self._device = self._smartbridge.get_device_by_id(self.device_id)
-        _LOGGER.debug(self._device)
+
+        # we only need ONE of the light switches to update to get data for ALL the zones
+        if self._zone == 1:  # FIXME: this should be done on an object we know always exist, the first dimmer COULD have not been configured
+            self._radiora.update()
