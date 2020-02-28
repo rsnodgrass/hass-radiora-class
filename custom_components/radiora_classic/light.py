@@ -32,6 +32,7 @@ class RadioRAClassicLight(RadioRAClassicDevice, Light):
     def __init__(self, radiora, zone, name):
         super().__init__(radiora, zone, name)
         self._brightness = DEFAULT_BRIGHTNESS
+        self._is_on = True
 
     @property
     def supported_features(self):
@@ -41,11 +42,12 @@ class RadioRAClassicLight(RadioRAClassicDevice, Light):
     @property
     def brightness(self):
         """Return the brightness of the light."""
-#        if self.is_on():
-            # RadioRA doesn't support GETTING current dimmer level; return last set value (or 100 if never set)
-        return to_hass_level(self._brightness)
-#        else:
-#            return 0
+        if self._is_on:
+            # RadioRA doesn't support GETTING current dimmer level;
+            # return last set value (or 100 if never set)
+            return to_hass_level(self._brightness)
+        else:
+            return 0
 
     async def async_turn_on(self, **kwargs):
         """Turn the light on."""
@@ -55,25 +57,23 @@ class RadioRAClassicLight(RadioRAClassicDevice, Light):
             lutron_brightness = to_lutron_level( hass_brightness )
             await self._radiora.set_dimmer_level(self._zone, lutron_brightness)
             self._brightness = lutron_brightness
+            self._is_on = True
         else:
             # if no dimmer level set, just turn on        
-            self._radiora.turn_on(self._zone)
-
-        # FIXME: after state change we should update the zone_status...
+            await self._radiora.turn_on(self._zone)
+            self._is_on = True
 
     async def async_turn_off(self, **kwargs):
         """Turn the light off."""
         await self._radiora.turn_off(self._zone)
-        # FIXME: after state change we should update the zone_status...
+        self._is_on = False
+        self._brightness = 0
 
     @property
-    async def is_on(self):
+    def is_on(self):
         """Return true if device is on."""
-        await self._radiora.is_zone_on(self._zone)
+        return self._is_on
 
     async def async_update(self):
         """Call when forcing a refresh of the device."""
-
-        # we only need ONE of the light switches to update to get data for ALL the zones
-        if self._zone == 1:  # FIXME: this should be done on an object we know always exist, the first dimmer COULD have not been configured
-            await self._radiora.update()
+        self._is_on = await self._radiora.is_zone_on(self._zone)
