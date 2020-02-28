@@ -41,11 +41,11 @@ class RadioRAClassicLight(RadioRAClassicDevice, Light):
     @property
     def brightness(self):
         """Return the brightness of the light."""
-        if self.is_on():
+#        if self.is_on():
             # RadioRA doesn't support GETTING current dimmer level; return last set value (or 100 if never set)
-            return to_hass_level(self._brightness)
-        else:
-            return 0
+        return to_hass_level(self._brightness)
+#        else:
+#            return 0
 
     async def async_turn_on(self, **kwargs):
         """Turn the light on."""
