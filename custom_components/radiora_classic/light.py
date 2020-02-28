@@ -136,12 +136,13 @@ class RadioRAClassicBridge(Light):
         """Call when forcing a refresh of the device."""
 
         # we only need ONE of the light switches to update to get data for ALL the zones
-        await self._radiora.update()
+        radiora = self._radiora
+        await radiora.update()
 
         # if any light is on, then the Bridge is on
         is_on = False
         for zone in range(1, 31):
-            if self._radiora.is_zone_on(zone):
+            if await radiora.is_zone_on(zone):
                 is_on = True
                 break
         self._is_on = is_on
