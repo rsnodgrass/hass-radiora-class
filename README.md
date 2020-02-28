@@ -20,7 +20,7 @@ Example configuration.yaml entry:
 ```yaml
 radiora_classic:
   controllers:
-    - tty: /dev/ttyUSB0
+    - port: /dev/ttyUSB0
       name: "Main House"   # defaults to "RadioRA Classic"
 ```
 

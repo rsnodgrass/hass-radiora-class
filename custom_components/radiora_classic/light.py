@@ -67,7 +67,7 @@ class RadioRAClassicLight(RadioRAClassicDevice, Light):
         # FIXME: after state change we should update the zone_status...
 
     @property
-    def is_on(self):
+    async def is_on(self):
         """Return true if device is on."""
         await self._radiora.is_zone_on(self._zone)
 
