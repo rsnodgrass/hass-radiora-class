@@ -89,6 +89,7 @@ class RadioRAClassicBridge(Light):
         super().__init__()
         self._radiora = radiora
         self._name = name
+        self._is_on = True
 
     @property
     def name(self):
@@ -111,10 +112,12 @@ class RadioRAClassicBridge(Light):
     async def async_turn_on(self, **kwargs):
         """Turn all lights on."""
         await self._radiora.turn_all_on()
+        self._is_on = True
 
     async def async_turn_off(self, **kwargs):
         """Turn all lights off."""
         await self._radiora.turn_all_off()
+        self._is_on = False
 
     async def async_security_flash_on(self, **kwargs):
         """Turn the security flashing lights on."""
@@ -127,7 +130,7 @@ class RadioRAClassicBridge(Light):
     @property
     def is_on(self):
         """Return true if any light controlled by the bridge is on."""
-        return True # FIXME: for now, this is "always" on
+        return self._is_on
 
     async def async_update(self):
         """Call when forcing a refresh of the device."""
@@ -135,11 +138,18 @@ class RadioRAClassicBridge(Light):
         # we only need ONE of the light switches to update to get data for ALL the zones
         await self._radiora.update()
 
+        # if any light is on, then the Bridge is on
+        is_on = False
+        for zone in range(1, 31):
+            if self._radiora.is_zone_on(zone):
+                is_on = True
+                break
+        self._is_on = is_on
+
     @property
     def device_state_attributes(self):
         """Return the state attributes."""
         return {}
-
 
     @property
     def should_poll(self):
