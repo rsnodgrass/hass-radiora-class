@@ -4,10 +4,12 @@ import logging
 from homeassistant.components.light import (
     DOMAIN,
     SUPPORT_BRIGHTNESS,
-    SUPPORT_TURN_ON,
-    SUPPORT_TURN_OFF,
     ATTR_BRIGHTNESS,
     Light,
+)
+from homeassistant.components.switch import (
+    DEVICE_CLASS_SWITCH,
+    SwitchDevice
 )
 from homeassistant.components.lutron.light import to_hass_level, to_lutron_level
 
@@ -17,6 +19,9 @@ LOG = logging.getLogger(__name__)
 
 DEFAULT_BRIGHTNESS = 100
 
+SERVICE_FLASH_ON = "turn_flash_on"
+SERVICE_FLASH_OFF = "turn_flash_off"
+
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Set up the Lutron RadioRA Classic lights."""
     radiora = hass.data[RADIORA_CLASSIC]
@@ -24,11 +29,16 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     devices = []
     devices.append(RadioRAClassicBridge(radiora, "RadioRA Bridge"))
 
-    for zone in range(1, 31):  # FIXME: allow override to specify names AND which zones to include
+    # FIXME: allow override to specify names AND which zones to include
+    for zone in range(1, 31):
         name = f"RadioRA Zone {zone}"
         devices.append(RadioRAClassicLight(radiora, zone, name))
 
     async_add_entities(devices)
+
+#    component.async_register_entity_service(SERVICE_FLASH_ON, {}, "async_security_flash_on")
+#    component.async_register_entity_service(SERVICE_FLASH_OFF, {}, "async_security_flash_off")
+
 
 class RadioRAClassicLight(RadioRAClassicDevice, Light):
     """Representation of a Lutron RadioRA Classic light."""
@@ -84,7 +94,7 @@ class RadioRAClassicLight(RadioRAClassicDevice, Light):
 
 
 
-class RadioRAClassicBridge(Light):
+class RadioRAClassicBridge(SwitchDevice):
     """Representation of a Lutron RadioRA Classic bridge."""
 
     def __init__(self, radiora, name):
@@ -97,11 +107,6 @@ class RadioRAClassicBridge(Light):
     def name(self):
         """Return the name of the device."""
         return self._name
-
-    @property
-    def supported_features(self):
-        """Flag supported features."""
-        return SUPPORT_TURN_OFF | SUPPORT_TURN_ON
 
     async def async_added_to_hass(self):
         """Register callbacks."""
@@ -157,3 +162,8 @@ class RadioRAClassicBridge(Light):
     def should_poll(self):
         """No polling needed."""
         return True
+
+    @property
+    def device_class(self):
+        """Return the class of this device, from component DEVICE_CLASSES."""
+        return DEVICE_CLASS_SWITCH
