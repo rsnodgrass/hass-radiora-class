@@ -46,7 +46,7 @@ class RadioRAClassicLight(RadioRAClassicDevice, Light):
     def __init__(self, radiora, zone, name):
         super().__init__(radiora, zone, name)
         self._brightness = DEFAULT_BRIGHTNESS
-        self._is_on = True
+        self._is_on = None # FIXME: the first update will set asynchronously
 
     @property
     def supported_features(self):
@@ -101,7 +101,7 @@ class RadioRAClassicBridge(SwitchDevice):
         super().__init__()
         self._radiora = radiora
         self._name = name
-        self._is_on = True
+        self._is_on = None  # FIXME: should be updated on first update (how to trigger)
 
     @property
     def name(self):
