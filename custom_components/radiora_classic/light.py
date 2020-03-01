@@ -4,6 +4,8 @@ import logging
 from homeassistant.components.light import (
     DOMAIN,
     SUPPORT_BRIGHTNESS,
+    SUPPORT_TURN_ON,
+    SUPPORT_TURN_OFF,
     ATTR_BRIGHTNESS,
     Light,
 )
@@ -78,7 +80,7 @@ class RadioRAClassicLight(RadioRAClassicDevice, Light):
 
     async def async_update(self):
         """Call when forcing a refresh of the device."""
-        self._is_on = (await self._radiora).is_zone_on(self._zone)
+        self._is_on = await self._radiora.is_zone_on(self._zone)
 
 
 
@@ -140,7 +142,7 @@ class RadioRAClassicBridge(Light):
         # if any light is on, then the Bridge is on
         is_on = False
         for zone in range(1, 31):
-            if (await self._radiora).is_zone_on(zone):
+            if await self._radiora.is_zone_on(zone):
                 is_on = True
                 break
         self._is_on = is_on
