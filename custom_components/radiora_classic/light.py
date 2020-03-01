@@ -99,6 +99,7 @@ class RadioRAClassicBridge(SwitchDevice):
 
     def __init__(self, radiora, name):
         super().__init__()
+        LOG.error("What is this? %s", radiora)
         self._radiora = radiora
         self._name = name
         self._is_on = None  # FIXME: should be updated on first update (how to trigger)
