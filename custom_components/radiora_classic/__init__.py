@@ -43,6 +43,7 @@ async def async_setup(hass, config):
 
     radiora_config = config.get(RADIORA_DOMAIN)
     tty = radiora_config.get(CONF_PORT)
+    LOG.debug(f"Loading RadioRA for {tty}")
 
     radiora = await get_async_radiora_controller(tty, hass.loop)
     if not radiora:
