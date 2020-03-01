@@ -99,8 +99,7 @@ class RadioRAClassicBridge(Light):
     @property
     def supported_features(self):
         """Flag supported features."""
-        #return SUPPORT_TURN_OFF | SUPPORT_TURN_ON
-        return
+        return SUPPORT_TURN_OFF | SUPPORT_TURN_ON
 
     async def async_added_to_hass(self):
         """Register callbacks."""
