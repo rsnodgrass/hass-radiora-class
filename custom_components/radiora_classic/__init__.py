@@ -41,7 +41,8 @@ RADIORA_CLASSIC_COMPONENTS = [ "light" ]
 async def async_setup(hass, config):
     """Set up the Lutron component."""
 
-    tty = config.get(RADIORA_DOMAIN)
+    radiora_config = config.get(RADIORA_DOMAIN)
+    tty = radiora_config.get(CONF_PORT)
 
     radiora = await get_async_radiora_controller(tty, hass.loop)
     if not radiora:
