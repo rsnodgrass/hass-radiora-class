@@ -44,7 +44,7 @@ async def async_setup(hass, config):
 
     tty = config.get(DOMAIN)
 
-    radiora = get_async_radiora_controller(tty, hass.loop)
+    radiora = await get_async_radiora_controller(tty, hass.loop)
     if not radiora:
         LOG.error("Unable to connect to RadioRA Classic Smart Bridge at %s", tty)
         return False
@@ -70,7 +70,7 @@ class RadioRAClassicDevice(Entity):
 
     async def async_added_to_hass(self):
         """Register callbacks."""
-    #    self._radiora.add_subscriber(
+    #    await self._radiora.add_subscriber(
     #        self.device_id, self.async_schedule_update_ha_state
     #    )
         return
