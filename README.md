@@ -13,7 +13,7 @@ If you have trouble with installation and configuration, visit the [Lutron Home 
 
 ### Step 1: Install Custom Components
 
-Make sure that [Home Assistant Community Store (HACS)](https://github.com/custom-components/hacs) is installed and then adding the "Integration" repository: *rsnodgrass/hass-radiora-classic*.
+Make sure that [Home Assistant Community Store (HACS)](https://github.com/custom-components/hacs) is installed and then add the "Integration" repository: *rsnodgrass/hass-radiora-classic*.
 
 Note: Manual installation by direct download and copying is not supported, if you have issues, please first try installing this integration with HACS.
 

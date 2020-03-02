@@ -99,7 +99,10 @@ class RadioRAClassicBridge(SwitchDevice):
 
     def __init__(self, radiora, name):
         super().__init__()
-        LOG.error("What is this? %s", radiora)
+
+        LOG.error("What is this? %s", radiora) # FIXME
+        self._one = radiora.is_zone_on(1) # FIXME
+
         self._radiora = radiora
         self._name = name
         self._is_on = None  # FIXME: should be updated on first update (how to trigger)
@@ -148,7 +151,7 @@ class RadioRAClassicBridge(SwitchDevice):
         # if any light is on, then the Bridge is on
         is_on = False
         for zone in range(1, 31):
-            LOG.error(self._radiora)
+            LOG.error("WHAT 2??? %s", self._radiora)
             if await self._radiora.is_zone_on(zone):
                 is_on = True
                 break
