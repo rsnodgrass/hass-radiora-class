@@ -47,10 +47,13 @@ async def async_setup(hass, config):
 
     radiora = await get_async_radiora_controller(tty, hass.loop)
     if not radiora:
-        LOG.error("Unable to connect to RadioRA Classic Smart Bridge at %s", tty)
+        LOG.error("Unable to connect to RadioRA Classic RS232 at %s", tty)
         return False
-    LOG.error(radiora)
+    LOG.error("WHO 1 %s", radiora)
     hass.data[RADIORA_CLASSIC] = radiora
+    LOG.error("WHO 2 %s", radiora)
+    LOG.error("WHO 3 %s", hass.data[RADIORA_CLASSIC])
+    radiora.is_zone_on(1) # FIXME
 
     for component in RADIORA_CLASSIC_COMPONENTS:
        hass.async_create_task(

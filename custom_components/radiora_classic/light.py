@@ -90,10 +90,7 @@ class RadioRAClassicLight(RadioRAClassicDevice, Light):
 
     async def async_update(self):
         """Call when forcing a refresh of the device."""
-        radiora = await self._radiora
-
-        LOG.error("CHECK: %s", radiora)
-        self._is_on = radiora.is_zone_on(self._zone)
+        self._is_on = self._radiora.is_zone_on(self._zone)
 
 
 
@@ -102,10 +99,6 @@ class RadioRAClassicBridge(SwitchDevice):
 
     def __init__(self, radiora, name):
         super().__init__()
-
-        LOG.error("What is this? %s", radiora) # FIXME
-        self._one = radiora.is_zone_on(1) # FIXME
-
         self._radiora = radiora
         self._name = name
         self._is_on = None  # FIXME: should be updated on first update (how to trigger)
@@ -147,12 +140,9 @@ class RadioRAClassicBridge(SwitchDevice):
 
     async def async_update(self):
         """Call when forcing a refresh of the device."""
-        LOG.error("CHECK 1: %s", self._radiora)
-        radiora = await self._radiora
-        LOG.error("CHECK 2: %s", radiora)
 
         # we only need ONE of the light switches to update to get data for ALL the zones
-        await radiora.update()
+        await self._radiora.update()
 
         # if any light that bridge manages is on, then the bridge is "on"
         is_on = False
